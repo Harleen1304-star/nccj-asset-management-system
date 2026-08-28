@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-br from-blue-100 via-white to-indigo-200">
+
+<div class="min-h-screen flex">
+
+    <aside class="hidden md:flex flex-col w-64 bg-white shadow-xl p-6">
+        <div class="flex items-center mb-10">
+            <img src="{{ url_for('static', filename='images/Logo_NCCJ.png') }}" alt="NCCJ Logo" class="w-12 h-12 object-contain rounded-lg">
+        </div>
+
+        <nav class="space-y-4">
+            <a href="/user/dashboard" class="block text-gray-600 hover:bg-gray-100 px-4 py-3 rounded-lg">
+                🏠 Dashboard
+            </a>
+            <a href="/user/my_assets" class="block text-gray-600 hover:bg-gray-100 px-4 py-3 rounded-lg">
+                💻 My Assets
+            </a>
+            <a href="/user/request_asset" class="block text-gray-600 hover:bg-gray-100 px-4 py-3 rounded-lg">
+                📦 Request Asset
+            </a>
+            <a href="/user/notifications" class="block bg-blue-100 text-blue-700 px-4 py-3 rounded-lg font-semibold">
+                🔔 Notifications
+            </a>
+            <a href="/logout" class="block text-red-600 hover:bg-red-100 px-4 py-3 rounded-lg">
+                🚪 Logout
+            </a>
+        </nav>
+    </aside>
+
+    <main class="flex-1 p-4 sm:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">Notifications</h1>
+            <a href="/logout" class="bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-lg shadow transition">
+                Logout
+            </a>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xl p-5 sm:p-8">
+            {% if notifications %}
+                <form id="deleteSelectedNotifications" method="POST" action="{{ url_for('delete_selected_notifications') }}" class="flex items-center justify-between gap-3 mb-4">
+                    <label class="flex items-center gap-2 text-sm text-gray-600">
+                        <input type="checkbox" id="selectAllNotifications">
+                        Select All
+                    </label>
+                    <button type="submit" class="text-sm text-red-600 hover:text-red-800 font-semibold">Delete Selected</button>
+                </form>
+                <div class="space-y-4">
+                    {% for notification in notifications %}
+                        <article class="border-l-4 {% if notification.status == 'Accepted' %}border-green-600 bg-green-50{% else %}border-red-600 bg-red-50{% endif %} rounded-lg p-5">
+                            <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" name="notification_ids" value="{{ notification.notification_id }}" form="deleteSelectedNotifications" class="notification-checkbox">
+                                    <h2 class="font-bold text-gray-800">Asset Request {{ notification.status }}</h2>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <time class="text-sm text-gray-500">{{ notification.created_at }}</time>
+                                    <form method="POST" action="{{ url_for('delete_notification', notification_id=notification.notification_id) }}">
+                                        <button type="submit" class="text-sm text-red-600 hover:text-red-800 font-semibold">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <p class="whitespace-pre-line text-gray-700">{{ notification.message }}</p>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-600">You have no notifications.</p>
+            {% endif %}
+        </div>
+    </main>
+
+</div>
+
+<script>
+    document.getElementById("selectAllNotifications")?.addEventListener("change", function () {
+        document.querySelectorAll(".notification-checkbox").forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+    });
+</script>
+
+</body>
+</html>

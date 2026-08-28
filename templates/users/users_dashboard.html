@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>User Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+
+<body class="bg-gradient-to-br from-blue-100 via-white to-indigo-200">
+
+
+<div class="min-h-screen flex">
+
+
+    <!-- Sidebar -->
+
+    <aside class="hidden md:flex flex-col w-64 bg-white shadow-xl p-6">
+
+
+        <div class="flex items-center mb-10">
+                <img src="{{ url_for('static', filename='images/Logo_NCCJ.png') }}" alt="NCCJ Logo" class="w-12 h-12 object-contain rounded-lg">
+        </div>
+
+
+        <nav class="space-y-4">
+
+
+            <a href="/user/dashboard"
+               class="block bg-blue-100 text-blue-700 px-4 py-3 rounded-lg font-semibold">
+
+                🏠 Dashboard
+
+            </a>
+
+
+            <a href="/user/my_assets"
+               class="block text-gray-600 hover:bg-gray-100 px-4 py-3 rounded-lg">
+
+                💻 My Assets
+
+            </a>
+
+
+            <a href="/user/request_asset"
+               class="block text-gray-600 hover:bg-gray-100 px-4 py-3 rounded-lg">
+
+                📦 Request Asset
+
+            </a>
+
+
+            <a href="/user/notifications"
+               class="block text-gray-600 hover:bg-gray-100 px-4 py-3 rounded-lg">
+
+                🔔 Notifications{% if unread_notifications %} ({{ unread_notifications }}){% endif %}
+
+            </a>
+
+
+            <a href="/logout"
+               class="block text-red-600 hover:bg-red-100 px-4 py-3 rounded-lg">
+
+                🚪 Logout
+
+            </a>
+
+
+        </nav>
+
+
+    </aside>
+
+
+
+
+    <!-- Main Content -->
+
+    <main class="flex-1 p-8">
+
+
+        <!-- Header -->
+
+        <div class="flex justify-between items-center">
+
+
+            <div>
+
+                <h1 class="text-4xl font-bold text-gray-800">
+
+                    My Dashboard
+
+                </h1>
+
+            </div>
+
+
+            <a href="/logout"
+
+               class="bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-lg shadow transition">
+
+                Logout
+
+            </a>
+
+
+        </div>
+
+
+
+
+        <!-- Dashboard Cards -->
+
+        <div class="grid md:grid-cols-2 gap-8 mt-10">
+
+
+
+            <!-- Assigned Assets -->
+
+
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+
+
+                <div class="flex justify-between items-center">
+
+
+                    <div>
+
+                        <h2 class="text-gray-500 text-lg">
+
+                            Assigned Assets
+
+                        </h2>
+
+
+                        <p class="text-5xl font-bold text-gray-800 mt-3">
+
+                            {{ assigned_assets }}
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="bg-green-100 p-4 rounded-full text-3xl">
+
+                        💻
+
+                    </div>
+
+
+                </div>
+
+
+
+                <a href="/user/my_assets"
+
+                   class="inline-block mt-6 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition">
+
+                    View My Assets
+
+                </a>
+
+
+            </div>
+
+
+
+
+
+            <!-- Pending Requests -->
+
+
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+
+
+                <div class="flex justify-between items-center">
+
+
+                    <div>
+
+                        <h2 class="text-gray-500 text-lg">
+
+                            Pending Requests
+
+                        </h2>
+
+
+                        <p class="text-5xl font-bold text-gray-800 mt-3">
+
+                            {{ pending_requests }}
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="bg-blue-100 p-4 rounded-full text-3xl">
+
+                        📋
+
+                    </div>
+
+
+                </div>
+
+
+
+                <a href="/user/request_asset"
+
+                   class="inline-block mt-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition">
+
+                    Request Asset
+
+                </a>
+
+
+            </div>
+
+
+
+        </div>
+
+          <!-- My Reminders Section -->
+
+
+        <div class="bg-white rounded-2xl shadow-xl mt-10 p-8">
+
+
+            <div class="flex items-center justify-between mb-6">
+
+
+                <h2 class="text-2xl font-bold text-gray-800">
+
+                    🔔 My Reminders
+
+                </h2>
+
+
+            </div>
+
+
+
+
+            {% if reminders %}
+
+
+
+                <div class="space-y-4">
+
+
+
+                {% for reminder in reminders %}
+
+
+
+                    <div class="border-l-4 border-blue-600 bg-blue-50 rounded-lg p-5">
+
+
+
+                        <div class="flex justify-between items-center">
+
+
+
+                            <div>
+
+
+                                <h3 class="font-bold text-gray-800 text-lg">
+
+
+                                    {{ reminder.asset_name }}
+
+
+                                </h3>
+
+
+
+                                <p class="text-gray-600">
+
+
+                                    Asset Tag:
+
+                                    {{ reminder.asset_tag }}
+
+
+                                </p>
+
+
+                            </div>
+
+
+
+
+                            <div class="text-right">
+
+
+                                {% if reminder.status == "Repair" %}
+
+
+                                    <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">
+
+                                        ⚠ Under Repair
+
+                                    </span>
+
+
+
+                                {% else %}
+
+
+
+                                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+
+                                        Active
+
+                                    </span>
+
+
+
+                                {% endif %}
+
+
+                            </div>
+
+
+
+                        </div>
+
+
+
+
+
+                        <p class="mt-3 text-gray-600">
+
+
+                            📅 Next Audit:
+
+                            <span class="font-semibold">
+
+                                {{ reminder.next_audit_date }}
+
+                            </span>
+
+
+                        </p>
+
+
+
+                    </div>
+
+
+
+                {% endfor %}
+
+
+
+                </div>
+
+
+
+
+            {% else %}
+
+
+
+                <div class="text-gray-500 bg-gray-50 rounded-lg p-5 text-center">
+
+
+                    ✅ No reminders available. Your assigned assets are up to date.
+
+
+
+                </div>
+
+
+
+            {% endif %}
+
+
+
+        </div>
+
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>

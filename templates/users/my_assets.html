@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Assets</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+
+<body class="bg-gradient-to-br from-blue-100 via-white to-indigo-200">
+
+
+<div class="min-h-screen flex">
+
+
+    <!-- Sidebar -->
+
+    <aside class="hidden md:flex flex-col w-64 bg-white shadow-xl p-6">
+
+
+        <div class="flex items-center mb-10">
+                <img src="{{ url_for('static', filename='images/Logo_NCCJ.png') }}" alt="NCCJ Logo" class="w-12 h-12 object-contain rounded-lg">
+        </div>
+
+
+
+        <nav class="space-y-4">
+
+
+            <a href="/user/dashboard"
+               class="block text-gray-600 hover:bg-gray-100 px-4 py-3 rounded-lg">
+
+                🏠 Dashboard
+
+            </a>
+
+
+
+            <a href="/user/my_assets"
+               class="block bg-blue-100 text-blue-700 px-4 py-3 rounded-lg font-semibold">
+
+                💻 My Assets
+
+            </a>
+
+
+
+            <a href="/user/request_asset"
+               class="block text-gray-600 hover:bg-gray-100 px-4 py-3 rounded-lg">
+
+                📦 Request Asset
+
+            </a>
+
+
+            <a href="/user/notifications"
+               class="block text-gray-600 hover:bg-gray-100 px-4 py-3 rounded-lg">
+
+                🔔 Notifications
+
+            </a>
+
+
+
+            <a href="/logout"
+               class="block text-red-600 hover:bg-red-100 px-4 py-3 rounded-lg">
+
+                🚪 Logout
+
+            </a>
+
+
+        </nav>
+
+
+    </aside>
+
+
+
+
+
+    <!-- Main Content -->
+
+    <main class="flex-1 p-8">
+
+
+        <!-- Header -->
+
+
+        <div class="mb-8">
+
+
+            <h1 class="text-4xl font-bold text-gray-800">
+
+                My Assigned Assets
+
+            </h1>
+
+        </div>
+
+
+
+
+
+        <!-- Asset List Card -->
+
+
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+
+
+            {% if assets %}
+
+
+            <div class="overflow-x-auto">
+
+
+                <table class="w-full text-left">
+
+
+                    <thead>
+
+
+                        <tr class="border-b text-gray-600">
+
+
+                            <th class="py-4">
+                                Asset Tag
+                            </th>
+
+
+                            <th class="py-4">
+                                Asset Name
+                            </th>
+
+
+                            <th class="py-4">
+                                Status
+                            </th>
+
+
+                            <th class="py-4">
+                                Assigned Date
+                            </th>
+
+
+                        </tr>
+
+
+                    </thead>
+
+
+
+                    <tbody>
+
+
+                        {% for asset in assets %}
+
+
+                        <tr class="border-b hover:bg-gray-50">
+
+
+                            <td class="py-4 font-semibold">
+
+                                {{ asset.asset_tag }}
+
+                            </td>
+
+
+
+                            <td class="py-4">
+
+                                {{ asset.asset_name }}
+
+                            </td>
+
+
+
+                            <td class="py-4">
+
+
+                                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+
+                                    Assigned
+
+                                </span>
+
+
+                            </td>
+
+
+
+                            <td class="py-4">
+
+                                {{ asset.assigned_date }}
+
+                            </td>
+
+
+                        </tr>
+
+
+                        {% endfor %}
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+
+            {% else %}
+
+
+            <div class="text-center py-10">
+
+
+                <div class="text-5xl mb-4">
+                    📦
+                </div>
+
+
+                <h2 class="text-xl font-semibold text-gray-700">
+
+                    No Assigned Assets
+
+                </h2>
+
+
+                <p class="text-gray-500 mt-2">
+
+                    You currently do not have any assigned equipment.
+
+                </p>
+
+
+                <a href="/user/request_asset"
+
+                   class="inline-block mt-5 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg">
+
+                    Request Asset
+
+                </a>
+
+
+            </div>
+
+
+            {% endif %}
+
+
+
+        </div>
+
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>

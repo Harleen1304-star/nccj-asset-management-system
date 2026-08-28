@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Asset Inventory</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+
+<body class="w-full max-w-full overflow-x-hidden bg-gradient-to-br from-blue-100 via-white to-indigo-200 text-gray-800">
+
+
+<div class="min-h-screen w-full max-w-full min-w-0 flex">
+
+
+    <!-- Sidebar -->
+
+    <aside class="hidden md:flex flex-col w-64 bg-white shadow-xl p-6">
+
+
+        <div class="flex items-center mb-10">
+
+            <img 
+                src="{{ url_for('static', filename='images/Logo_NCCJ.png') }}"
+                alt="NCCJ Logo"
+                class="w-12 h-12 object-contain rounded-lg">
+
+        </div>
+
+
+
+        <nav class="space-y-4">
+
+
+            <a href="/admin/dashboard"
+               class="block text-gray-600 hover:bg-gray-100 px-4 py-3 rounded-lg">
+
+                🏠 Dashboard
+
+            </a>
+
+
+
+            <a href="/admin/assets"
+               class="block bg-blue-100 text-blue-700 px-4 py-3 rounded-lg font-semibold">
+
+                💻 Assets
+
+            </a>
+
+
+
+            <a href="/admin/create_asset"
+               class="block text-gray-600 hover:bg-gray-100 px-4 py-3 rounded-lg">
+
+                ➕ Add Asset
+
+            </a>
+
+
+
+            <a href="/admin/requests"
+               class="block text-gray-600 hover:bg-gray-100 px-4 py-3 rounded-lg">
+
+                📋 Requests
+
+            </a>
+
+
+
+            <a href="/logout"
+               class="block text-red-600 hover:bg-red-100 px-4 py-3 rounded-lg">
+
+                🚪 Logout
+
+            </a>
+
+
+        </nav>
+
+
+    </aside>
+
+
+
+
+
+    <!-- Main Content -->
+
+
+    <main class="w-full max-w-full min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
+
+
+        <!-- Header -->
+
+
+        <div class="flex w-full max-w-full min-w-0 flex-wrap items-center justify-between gap-4 mb-8">
+
+
+            <div class="min-w-0">
+
+                <h1 class="break-words text-3xl sm:text-4xl font-bold text-gray-800">
+
+                    Asset Inventory
+
+                </h1>
+
+
+            </div>
+
+
+
+            <a href="/admin/create_asset"
+
+               class="inline-flex self-start sm:self-auto w-auto shrink-0 whitespace-nowrap items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg shadow-lg font-semibold transition">
+
+                + Add Asset
+
+            </a>
+
+
+        </div>
+
+
+
+
+
+        <form method="GET" action="{{ url_for('admin_assets') }}" class="w-full max-w-full min-w-0 bg-white rounded-2xl shadow-xl p-5 sm:p-6 mb-6">
+
+            <label for="assigned_to" class="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                Assigned To:
+            </label>
+
+            <select id="assigned_to" name="assigned_to"
+                    class="w-full max-w-full sm:w-72 border border-gray-300 rounded-lg px-4 py-3 bg-white focus:ring-2 focus:ring-blue-400 focus:border-blue-500 outline-none"
+                    onchange="this.form.submit()">
+                <option value="all" {% if selected_assignee == "all" %}selected{% endif %}>All Users</option>
+                {% for user in users %}
+                <option value="{{ user.user_id }}" {% if selected_assignee == user.user_id|string %}selected{% endif %}>
+                    {{ user.username }}
+                </option>
+                {% endfor %}
+                <option value="unassigned" {% if selected_assignee == "unassigned" %}selected{% endif %}>Unassigned</option>
+            </select>
+
+        </form>
+
+
+        <!-- Asset Table -->
+
+
+        <div class="w-full max-w-full min-w-0 bg-white rounded-2xl shadow-xl p-3 sm:p-4 overflow-x-auto">
+
+
+            <table class="w-full min-w-[980px] table-fixed text-left text-sm">
+
+
+                <thead>
+
+
+                    <tr class="border-b text-xs uppercase tracking-wide text-gray-500 bg-gray-50">
+
+
+                        <th class="w-12 px-2 py-2">
+                            <input type="checkbox" id="selectAllAssets" aria-label="Select all assets">
+                            ID
+                        </th>
+
+
+                        <th class="w-24 px-2 py-2">
+                            Asset Tag
+                        </th>
+
+
+                        <th class="w-36 px-2 py-2">
+                            Asset Name
+                        </th>
+
+
+                        <th class="w-24 px-2 py-2">
+                            Status
+                        </th>
+
+
+                        <th class="w-28 px-2 py-2">
+                            Funder
+                        </th>
+
+
+                        <th class="w-28 px-2 py-2">
+                            Assigned To
+                        </th>
+
+
+                        <th class="w-28 px-2 py-2">
+                            Last Audit
+                        </th>
+
+
+                        <th class="w-28 px-2 py-2">
+                            Next Audit
+                        </th>
+
+
+                        <th class="w-24 px-2 py-2">
+                            Audit
+                        </th>
+
+
+                        <th class="w-28 px-2 py-2">
+                            Due Check-in
+                        </th>
+
+
+                        <th class="w-32 px-2 py-2">
+                            Actions
+                        </th>
+
+
+                    </tr>
+
+
+                </thead>
+
+
+
+                <tbody>
+
+
+                {% for asset in assets %}
+
+
+                    <tr class="border-b border-gray-100 hover:bg-blue-50/40 transition">
+
+
+                        <td class="px-2 py-2 text-xs text-gray-500">
+                            <input type="checkbox" class="asset-checkbox" value="{{ asset.asset_id }}" aria-label="Select asset {{ asset.asset_id }}">
+                            {{ asset.asset_id }}
+                        </td>
+
+
+                        <td class="px-2 py-2 font-semibold">
+                            <span class="block truncate" title="{{ asset.asset_tag }}">{{ asset.asset_tag }}</span>
+                        </td>
+
+
+                        <td class="px-2 py-2">
+                            <span class="block truncate" title="{{ asset.asset_name }}">{{ asset.asset_name }}</span>
+                        </td>
+
+
+
+                        <td class="px-2 py-2">
+
+
+                            {% if asset.status == "Available" %}
+
+                            <span class="inline-flex max-w-full truncate bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-medium">
+
+                                Available
+
+                            </span>
+
+
+                            {% elif asset.status == "Assigned" %}
+
+
+                            <span class="inline-flex max-w-full truncate bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-medium">
+
+                                Assigned
+
+                            </span>
+
+
+                            {% else %}
+
+
+                            <span class="inline-flex max-w-full truncate bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs font-medium">
+
+                                {{ asset.status }}
+
+                            </span>
+
+
+                            {% endif %}
+
+
+                        </td>
+
+
+
+                        <td class="px-2 py-2 text-gray-600">
+                            <span class="block truncate" title="{{ asset.funder or '' }}">{{ asset.funder }}</span>
+                        </td>
+
+
+                        <td class="px-2 py-2 font-medium">
+                            <span class="block truncate" title="{{ asset.assigned_to or 'Unassigned' }}">{{ asset.assigned_to or "Unassigned" }}</span>
+                        </td>
+
+
+
+                        <td class="px-2 py-2 whitespace-nowrap text-xs">
+                            {{ asset.last_audit_date }}
+                        </td>
+
+
+
+                        <td class="px-2 py-2 whitespace-nowrap text-xs">
+                            {{ asset.next_audit_date }}
+                        </td>
+
+
+                        <td class="px-2 py-2 whitespace-nowrap">
+
+                            {% if asset.next_audit_date %}
+
+                            <form method="POST"
+                                  action="{{ url_for('recertify_asset', id=asset.asset_id) }}"
+                                  onsubmit="return confirm('Are you sure you want to re-certify this audit? The next audit will be due in 90 days.');"
+                                  class="inline">
+
+                                <button type="submit"
+                                    class="inline-flex items-center text-blue-700 hover:text-blue-900 text-xs font-semibold mr-2">
+
+                                    Re-certify
+
+                                </button>
+
+                            </form>
+
+                            {% endif %}
+
+                        </td>
+
+
+
+                        <td class="px-2 py-2 whitespace-nowrap text-xs">
+                            {{ asset.due_checkin }}
+                        </td>
+
+
+
+                        <td class="px-2 py-2 whitespace-nowrap">
+
+
+                                {% if asset.status == "Available" and not asset.assigned_to %}
+
+                                <button type="button"
+                                    class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-md shadow-sm text-xs font-semibold transition"
+                                    data-asset-id="{{ asset.asset_id }}"
+                                    data-asset-label="{{ asset.asset_tag }} - {{ asset.asset_name }}"
+                                    onclick="openAssignModal(this)">
+
+                                Assign
+
+                                </button>
+
+                                {% endif %}
+
+
+
+                                     <a href="/admin/delete_asset/{{asset.asset_id}}"
+                                         onclick="useSelectedAssetForDelete(this, {{ asset.asset_id }});"
+
+                               class="inline-flex items-center text-red-600 hover:text-red-800 text-xs font-semibold ml-2">
+
+                                Delete
+
+                            </a>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                {% endfor %}
+
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+    </main>
+
+
+</div>
+
+
+<div id="assignModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 p-4">
+
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
+
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Assign Asset</h2>
+            <button type="button" onclick="closeAssignModal()" class="text-gray-500 hover:text-gray-800 text-2xl" aria-label="Close">&times;</button>
+        </div>
+
+        <p class="text-gray-700 mb-6">
+            Asset:<br>
+            <strong id="assignAssetLabel"></strong>
+        </p>
+
+        <form method="POST" action="{{ url_for('assign_asset') }}" onsubmit="return validateAssignment()">
+            <input type="hidden" id="assignAssetId" name="asset_id">
+
+            <label for="assignUserId" class="block text-sm font-semibold text-gray-700 mb-2">
+                Assign to:
+            </label>
+
+            <select id="assignUserId" name="user_id"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-400 focus:border-blue-500 outline-none">
+                <option value="">Select a user</option>
+                {% for user in users %}
+                <option value="{{ user.user_id }}">{{ user.username }}</option>
+                {% endfor %}
+            </select>
+
+            <p id="assignError" class="hidden text-red-600 text-sm mt-2">Please select a user.</p>
+
+            <div class="flex justify-end gap-3 mt-8">
+                <button type="button" onclick="closeAssignModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-5 py-3 rounded-lg font-semibold">
+                    Cancel
+                </button>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg font-semibold">
+                    Assign Asset
+                </button>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+    function getSelectedAssetIds() {
+        return Array.from(document.querySelectorAll(".asset-checkbox:checked"))
+            .map(checkbox => checkbox.value);
+    }
+
+    document.getElementById("selectAllAssets").addEventListener("change", function () {
+        document.querySelectorAll(".asset-checkbox").forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+    });
+
+    function openAssignModal(button) {
+        const selectedAssetIds = getSelectedAssetIds();
+        document.getElementById("assignAssetId").value = selectedAssetIds.length === 1
+            ? selectedAssetIds[0]
+            : button.dataset.assetId;
+        document.getElementById("assignAssetLabel").textContent = button.dataset.assetLabel;
+        document.getElementById("assignUserId").value = "";
+        document.getElementById("assignError").classList.add("hidden");
+        const modal = document.getElementById("assignModal");
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    }
+
+    function closeAssignModal() {
+        const modal = document.getElementById("assignModal");
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+    }
+
+    function validateAssignment() {
+        const userSelect = document.getElementById("assignUserId");
+        const error = document.getElementById("assignError");
+        if (!userSelect.value) {
+            error.classList.remove("hidden");
+            return false;
+        }
+        error.classList.add("hidden");
+        return true;
+    }
+
+    function useSelectedAssetForDelete(link, rowAssetId) {
+        const selectedAssetIds = getSelectedAssetIds();
+        if (selectedAssetIds.length === 1 && selectedAssetIds[0] !== String(rowAssetId)) {
+            link.href = link.href.replace(/\/\d+$/, "/" + selectedAssetIds[0]);
+        }
+    }
+</script>
+
+</body>
+
+</html>

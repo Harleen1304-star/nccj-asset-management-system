@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+
+<body class="bg-gradient-to-br from-blue-100 via-white to-indigo-200">
+
+
+<div class="min-h-screen flex">
+
+
+    <!-- Sidebar -->
+
+    <aside class="hidden md:flex flex-col w-64 bg-white shadow-xl p-6">
+
+
+        <div class="flex items-center mb-10">
+
+
+            <img 
+                src="{{ url_for('static', filename='images/Logo_NCCJ.png') }}"
+                alt="NCCJ Logo"
+                class="w-12 h-12 object-contain rounded-lg">
+
+        </div>
+
+        <nav class="space-y-4">
+
+
+            <a href="/admin/dashboard"
+
+               class="block bg-blue-100 text-blue-700 px-4 py-3 rounded-lg font-semibold">
+
+                🏠 Dashboard
+
+            </a>
+
+
+
+            <a href="/admin/assets"
+
+               class="block text-gray-600 hover:bg-gray-100 px-4 py-3 rounded-lg">
+
+                💻 Assets
+
+            </a>
+
+
+
+
+            <a href="/admin/create_asset"
+
+               class="block text-gray-600 hover:bg-gray-100 px-4 py-3 rounded-lg">
+
+                ➕ Create Asset
+
+            </a>
+
+
+
+
+            <a href="/admin/requests"
+
+               class="block text-gray-600 hover:bg-gray-100 px-4 py-3 rounded-lg">
+
+                📋 Requests
+
+            </a>
+
+
+
+
+            <a href="/logout"
+
+               class="block text-red-600 hover:bg-red-100 px-4 py-3 rounded-lg">
+
+                🚪 Logout
+
+            </a>
+
+
+        </nav>
+
+
+    </aside>
+
+
+
+
+
+    <!-- Main Content -->
+
+    <main class="flex-1 p-8">
+
+
+
+        <!-- Header -->
+
+
+        <div class="mb-8">
+
+
+            <h1 class="text-4xl font-bold text-gray-800">
+
+                Admin Dashboard
+
+            </h1>
+
+
+
+        </div>
+
+
+
+        <!-- Statistics Cards -->
+
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+
+
+            <!-- Total Assets -->
+
+
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+
+
+                <div class="flex justify-between items-center">
+
+
+                    <div>
+
+
+                        <h2 class="text-gray-500">
+
+                            Total Assets
+
+                        </h2>
+
+
+                        <p class="text-5xl font-bold text-gray-800 mt-3">
+
+                            {{ total_assets }}
+
+                        </p>
+
+
+                    </div>
+
+
+                    <div class="bg-blue-100 p-4 rounded-full text-3xl">
+
+                        📦
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+
+
+            <!-- Available -->
+
+
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+
+
+                <div class="flex justify-between items-center">
+
+
+                    <div>
+
+                        <h2 class="text-gray-500">
+
+                            Available
+
+                        </h2>
+
+
+                        <p class="text-5xl font-bold text-green-600 mt-3">
+
+                            {{ available_assets }}
+
+                        </p>
+
+
+                    </div>
+
+
+                    <div class="bg-green-100 p-4 rounded-full text-3xl">
+
+                        ✅
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+
+
+            <!-- Assigned -->
+
+
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+
+
+                <div class="flex justify-between items-center">
+
+
+                    <div>
+
+                        <h2 class="text-gray-500">
+
+                            Assigned
+
+                        </h2>
+
+
+                        <p class="text-5xl font-bold text-blue-600 mt-3">
+
+                            {{ assigned_assets }}
+
+                        </p>
+
+
+                    </div>
+
+
+                    <div class="bg-blue-100 p-4 rounded-full text-3xl">
+
+                        💻
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+
+
+            <!-- Users -->
+
+
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+
+
+                <div class="flex justify-between items-center">
+
+
+                    <div>
+
+                        <h2 class="text-gray-500">
+
+                            Users
+
+                        </h2>
+
+
+                        <p class="text-5xl font-bold text-purple-600 mt-3">
+
+                            {{ total_users }}
+
+                        </p>
+
+
+                    </div>
+
+
+                    <div class="bg-purple-100 p-4 rounded-full text-3xl">
+
+                        👥
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+        <section class="bg-white rounded-2xl shadow-xl mt-10 p-8">
+
+            <div class="flex flex-wrap justify-between items-center gap-3 mb-6">
+
+                <h2 class="text-2xl font-bold text-gray-800">
+                    Audits Due Soon
+                </h2>
+
+                <span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-semibold">
+                    {{ audits_due_soon|length }} audit(s)
+                </span>
+
+            </div>
+
+            {% if audits_due_soon %}
+
+            <div class="overflow-x-auto">
+
+                <table class="w-full text-left">
+
+                    <thead>
+
+                        <tr class="border-b text-gray-600 bg-gray-50">
+                            <th class="px-4 py-4">Asset Tag</th>
+                            <th class="px-4 py-4">Asset Name</th>
+                            <th class="px-4 py-4">Assigned User/Funder</th>
+                            <th class="px-4 py-4">Next Audit</th>
+                            <th class="px-4 py-4">Days Remaining</th>
+                            <th class="px-4 py-4">Status</th>
+                            <th class="px-4 py-4">Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    {% for audit in audits_due_soon %}
+
+                        <tr class="border-b hover:bg-gray-50 transition">
+                            <td class="px-4 py-4 font-semibold">{{ audit.asset_tag }}</td>
+                            <td class="px-4 py-4">{{ audit.asset_name }}</td>
+                            <td class="px-4 py-4">{{ audit.assigned_user_or_funder }}</td>
+                            <td class="px-4 py-4 whitespace-nowrap">{{ audit.next_audit_date }}</td>
+                            <td class="px-4 py-4 whitespace-nowrap">{{ audit.days_remaining }}</td>
+                            <td class="px-4 py-4">
+                                {% if audit.audit_status == "Overdue" %}
+                                <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">Overdue</span>
+                                {% else %}
+                                <span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-semibold">Due Soon</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap">
+                                <form method="POST"
+                                      action="{{ url_for('recertify_asset', id=audit.asset_id) }}"
+                                      onsubmit="return confirm('Are you sure you want to re-certify this audit? The next audit will be due in 90 days.');"
+                                      class="inline">
+                                    <button type="submit" class="text-blue-600 hover:text-blue-800 font-semibold">
+                                        Re-certify
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <p class="text-gray-500">
+                No audits are overdue or due within the next 15 days.
+            </p>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- Quick Actions -->
+
+
+        <div class="bg-white rounded-2xl shadow-xl mt-10 p-8">
+
+
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">
+
+                Quick Actions
+
+            </h2>
+
+
+
+            <div class="flex flex-wrap gap-4">
+
+
+                <a href="/admin/create_asset"
+
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg shadow font-semibold">
+
+                    + Create Asset
+
+                </a>
+
+
+
+
+                <a href="/admin/assets"
+
+                   class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg shadow font-semibold">
+
+                    View Assets
+
+                </a>
+
+
+
+
+                <a href="/admin/requests"
+
+                   class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg shadow font-semibold">
+
+                    View Requests
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>
