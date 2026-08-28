@@ -4,7 +4,7 @@ A Flask-based web application for managing organizational assets, including asse
 
 ## 🌐 Live Application
 
-**(https://nccj-asset-management-system.onrender.com/)**
+**https://nccj-asset-management-system.onrender.com/**
 
 ## 💻 Source Code
 
